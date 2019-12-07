@@ -66,6 +66,20 @@ using pll = pair<int64, int64>;
 const int INF = (1<<30) - 1;
 const int64 INF64 = (1LL<<62) - 1;
 
+template<typename T> T gcd(T a, T b) {
+    if (a < b) return gcd(b, a);
+    T r;
+    while ((r = a % b)) {
+        a = b;
+        b = r;
+    }
+    return b;
+}
+
+template<typename T> T lcm(const T a, const T b) {
+    return a / gcd(a, b) * b;
+}
+
 // End of template.
 
 int main(){
