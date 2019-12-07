@@ -65,75 +65,7 @@ using pll = pair<int64, int64>;
 const int INF = (1<<30) - 1;
 const int64 INF64 = (1LL<<62) - 1;
 
-// Begin Mod
-template<typename T, T mod_, bool is_prime = true>
-class Mod {
-public:
-    using Self = Mod<T, mod_, is_prime>;
-    T value;
-    static constexpr T mod = mod_;
-    Mod(T x) { value = x % mod; }
-    explicit operator T&() { return value; }
-    Self operator +(Self const x) const { return (value + x.value) % mod; }
-    Self operator *(Self const x) const { return (value * x.value) % mod; }
-    Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
-    Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
-    Self operator +=(Self const x) { return value = (value + x.value) % mod; }
-    Self operator *=(Self const x) { return value = (value * x.value) % mod; }
-    Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
-    Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
-    Self inv() const {
-        T a = value, b = mod, u = 1, v = 0;
-        while (b) {
-            T t = a / b;
-            a -= t * b; swap(a, b);
-            u -= t * v; swap(u, v);
-        }
-        u %= mod;
-        if (u < 0) u += mod;
-        return u;
-    }
-    Self pow(int e) const {
-        if (e < 0) return inv().pow(-e);
-        if (is_prime) e %= mod - 1;
-        Self base = value;
-        Self res = 1;
-        while (e > 0) {
-            if (e & 1) res *= base;
-            base *= base;
-            e >>= 1;
-        }
-        return res;
-    }
-};
-// End Mod
-
-// Begin UnionFind
-class UnionFind {
-public:
-    explicit UnionFind(int const size) {
-        v.resize(size);
-        rep(i, size) v[i] = i;
-    }
-    vector<int> v;
-    bool is_same(int const i, int const j) {
-        return root(i) == root(j);
-    }
-    void unite(int const i, int const j) {
-        const int ri = root(i);
-        const int rj = root(j);
-        if (ri == rj) return;
-        v[rj] = ri;
-    }
-    int root(int const i) {
-        if (v[i] == i) return i;
-        return v[i] = root(v[i]);
-    }
-};
-// End UnionFind
-
 // End of template.
-
 
 int main(){
     cout << fixed << setprecision(15);
