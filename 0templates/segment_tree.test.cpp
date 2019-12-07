@@ -66,6 +66,7 @@ using pll = pair<int64, int64>;
 const int INF = (1<<30) - 1;
 const int64 INF64 = (1LL<<62) - 1;
 
+#include "monoid.cpp"
 #include "segment_tree.cpp"
 
 template<typename M>
