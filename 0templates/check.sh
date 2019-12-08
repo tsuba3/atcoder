@@ -1,4 +1,4 @@
-#!/usr/local/bin/zsh
+#!/bin/zsh
 
 IN=${IN:-"in"}
 OUT=${OUT:-"out"}
