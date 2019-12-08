@@ -93,7 +93,7 @@ public:
         v[i] = m;
         lazy[i] = Op::unit;
         build(i, i + 1);
-        build(i);
+        recalc(i);
     }
     void set(int l, int r, MT const m) {
         l += n; r += n;
@@ -104,8 +104,8 @@ public:
             for (int i = ll; i < rr; ++i) lazy[i] = Op::unit;
         }
         build(l, r);
-        build(l);
-        build(r - 1);
+        recalc(l);
+        recalc(r - 1);
     }
     template<typename I>
     void set(int l, int r, I it) {
@@ -117,8 +117,8 @@ public:
             for (int i = ll; i < rr; ++i) lazy[i] = Op::unit;
         }
         build(l, r);
-        build(l);
-        build(r - 1);
+        recalc(l);
+        recalc(r - 1);
     }
     /// 点取得 O(1)
     MT get(int i) {
@@ -149,7 +149,7 @@ public:
         i += n;
         if (!op_commutative) propagate(i);
         lazy[i] = Op::f(lazy[i], op);
-        build(i);
+        recalc(i);
     }
     /// 区間演算 O(log n)
     void update(int l, int r, OpT const op) {
@@ -160,8 +160,8 @@ public:
             if (ll & 1) lazy[ll] = Op::f(lazy[ll], op), ++ll;
             if (rr & 1) --rr, lazy[rr] = Op::f(lazy[rr], op);
         }
-        build(l);
-        build(r - 1);
+        recalc(l);
+        recalc(r - 1);
     }
     /// 全区間演算 O(1)
     void update(OpT const op) {
@@ -194,7 +194,7 @@ public:
         lazy[i] = lazy[i^1] = Op::unit;
     }
 
-    void build(int i) {
+    void recalc(int i) {
         int d = 0;
         while (i >>= 1) {
             MT left = f(v[2 * i], lazy[2 * i], 1 << d);
