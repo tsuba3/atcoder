@@ -31,6 +31,7 @@
 #include <string>
 #include <sstream>
 #include <complex>
+#include <bitset>
 #include <vector>
 #include <list>
 #include <set>
@@ -103,7 +104,7 @@ char buf[1000*1000];
 int bufi = 0;
 template<typename T>
 void readi(T &n) {
-    bool negative;
+    bool negative = false;
     int c;
     n = 0;
     c = buf[bufi++];
