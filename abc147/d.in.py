@@ -1,6 +1,6 @@
 import numpy as np
 n = int(input())
 print(n)
-a = (np.random.random(n) * (2**60)).astype(int)
+a = np.random.randint(0, 2**60, n)
 print(' '.join(list(map(str, a))))
 

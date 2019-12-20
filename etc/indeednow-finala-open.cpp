@@ -20,6 +20,10 @@
                   Please give me AC.
 */
 
+// 3. 最適化 11ms -> 11ms
+#pragma GCC optimize("O3", "unroll-loops")
+#pragma GCC target("avx")
+
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -100,39 +104,90 @@ void print_time() {
     fprintf(stderr, "\n");
 }
 
-char buf[1000*1000];
+char buf[2000000];
 int bufi = 0;
 template<typename T>
 void readi(T &n) {
-    bool negative = false;
     int c;
     n = 0;
     c = buf[bufi++];
-    if (c == '-') negative = true, c = buf[bufi++];
     for (; '0' <= c && c <= '9'; c = buf[bufi++])
         n = 10 * n + c - '0';
-    if (negative) n = -n;
+}
+
+char wbuf[600000];
+int wbufi = 0;
+template<typename T>
+void writeui(T n) {
+    if (n == 0) {
+        wbuf[wbufi++] = '0', wbuf[wbufi++] = '\n';
+        return ;
+    }
+    char temp[16];
+    char* p = end(temp);
+    while (n) {
+        *--p = (n % 10) + '0';
+        n /= 10;
+    }
+    while (p < end(temp))
+        wbuf[wbufi++] = *p++;
+    wbuf[wbufi++] = '\n';
 }
 
 // End of template.
+
+template<typename T>
+void chmax(T& a, const T& b) {
+    if (a < b) a = b;
+}
+
+int dp[101][101][101];
 
 int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    measure_time();
-
+    // 1. 入力高速化　36ms -> 14ms
     cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    measure_time();
-
-    int n, t, a[3000], b[3000];
+    int n, m;
     readi(n);
-    readi(t);
+    readi(m);
+    rep(i, n) {
+        int a, b, c, w;
+        readi(a);
+        readi(b);
+        readi(c);
+        readi(w);
+        chmax(dp[a][b][c], w);
+    }
+    // 4. if 文をループ内から削除 11ms -> 10ms
+    for (int i = 0; i < 101; ++i) for (int j = 0; j < 101; ++j) {
+        if(i) {
+            chmax(dp[i][j][0], dp[i - 1][j][0]);
+            chmax(dp[i][0][j], dp[i - 1][0][j]);
+            chmax(dp[0][i][j], dp[0][i - 1][j]);
+        }
+        if (j) {
+            chmax(dp[i][j][0], dp[i][j - 1][0]);
+            chmax(dp[i][0][j], dp[i][0][j - 1]);
+            chmax(dp[0][i][j], dp[0][i][j - 1]);
+        }
+    }
+    for (int i = 1; i < 101; ++i) for (int j = 1; j < 101; ++j) for (int k = 1; k < 101; ++k) {
+        chmax(dp[i][j][k], dp[i - 1][j][k]);
+        chmax(dp[i][j][k], dp[i][j - 1][k]);
+        chmax(dp[i][j][k], dp[i][j][k - 1]);
+    }
+    rep(i, m) {
+        int x, y, z;
+        readi(x);
+        readi(y);
+        readi(z);
+        writeui(dp[x][y][z]);
+    }
 
-    measure_time();
-    print_time();
+    cout.write(wbuf, wbufi);
     return 0;
 }
 

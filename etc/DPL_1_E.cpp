@@ -120,19 +120,24 @@ int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    measure_time();
+    string s, t;
+    cin >> s >> t;
+    int dp[2][1010];
+    rep(i, t.size() + 1) dp[0][i] = i;
 
-    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
+    rep(si, s.size()) {
+        int SI = si & 1;
+        dp[SI^1][0] = si+1;
+        rep(ti, t.size()) {
+            dp[SI^1][ti + 1] = min({dp[SI][ti + 1] + 1, dp[SI^1][ti] + 1,
+                    dp[SI][ti] + int(s[si] != t[ti])});
+        }
+    }
 
-    measure_time();
+    print(dp[(s.size()) & 1][t.size()]);
 
-    int n, t, a[3000], b[3000];
-    readi(n);
-    readi(t);
-
-    measure_time();
-    print_time();
     return 0;
 }
 

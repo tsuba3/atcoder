@@ -120,19 +120,23 @@ int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    measure_time();
+    int q;
+    cin >> q;
+    rep(qi, q) {
+        string x, y;
+        cin >> x >> y;
+        int dp[1010] = {};
+        rep(yi, y.size()) {
+            for (int xi = x.size() - 1; xi >= 0; --xi) {
+                dp[xi + 1] = max(dp[xi] + (x[xi] == y[yi]), dp[xi + 1]);
+            }
+            rep(xi, x.size()) dp[xi + 1] = max(dp[xi + 1], dp[xi]);
+        }
+        print(dp[x.size()]);
+    }
 
-    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
-
-    measure_time();
-
-    int n, t, a[3000], b[3000];
-    readi(n);
-    readi(t);
-
-    measure_time();
-    print_time();
     return 0;
 }
 

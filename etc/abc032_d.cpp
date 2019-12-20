@@ -116,23 +116,58 @@ void readi(T &n) {
 
 // End of template.
 
+template<typename T> void chmax(T& x, const T& y) { if (x < y) x = y; }
+
+pll dp[1 << 15 + 10];
+
 int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    measure_time();
+    int64 n, W, maxv = 0, maxw = 0;
+    int64 v[200], w[200];
+    cin >> n >> W;
+    rep(i, n) {
+        cin >> v[i] >> w[i];
+        chmax(maxv, v[i]);
+        chmax(maxw, w[i]);
+    }
 
-    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
+    if (n <= 30) {
+        int64 ans = 0;
+        rep(bits, 1 << (n / 2)) {
+            rep(i, n / 2) if (bits & (1 << i)) {
+                dp[bits].first += v[i];
+                dp[bits].second += w[i];
+            }
+        }
+        sort(begin(dp), begin(dp) + (1 << (n / 2)), [](const auto a, const auto b) {
+            return a.second == b.second ? a.first < b.first : a.second < b.second;
+        });
+        rep(bits, 1 << (n - n / 2)) {
+            int64 vv = 0, ww = 0;
+            rep(i, n - n / 2) if (bits & (1 << i)) {
+                vv += v[i + n / 2];
+                ww += w[i + n / 2];
+            }
+            int l = 0, r = 1 << (n / 2);
+            while (r - l > 1) {
+                int x = (l + r) / 2;
+                if (dp[x].second + ww <= W)
+                    l = x;
+                else
+                    r = x;
+            }
+            chmax(ans, vv + dp[l].first);
+        }
+        print(ans);
+    } else if (maxv <= 1000) {
+    } else { // maxw <= 1000
+    }
 
-    measure_time();
 
-    int n, t, a[3000], b[3000];
-    readi(n);
-    readi(t);
-
-    measure_time();
-    print_time();
     return 0;
 }
 

@@ -20,6 +20,9 @@
                   Please give me AC.
 */
 
+#pragma GCC optimize("O3", "unroll-loops")
+#pragma GCC target("avx")
+
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -31,6 +34,7 @@
 #include <string>
 #include <sstream>
 #include <complex>
+#include <bitset>
 #include <vector>
 #include <list>
 #include <set>
@@ -41,6 +45,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <chrono>
 #include <random>
 
 using namespace std;
@@ -80,21 +85,91 @@ template<typename T> T lcm(const T a, const T b) {
     return a / gcd(a, b) * b;
 }
 
+chrono::high_resolution_clock::time_point step_time[10];
+int step_time_i = 0;
+void measure_time() {
+    step_time[step_time_i++] = chrono::high_resolution_clock::now();
+}
+double calc_microsecond(const chrono::high_resolution_clock::time_point &a, const chrono::high_resolution_clock::time_point &b) {
+    return chrono::duration_cast<chrono::microseconds>(b - a).count() / 1000.0;
+}
+void print_time() {
+    if (step_time_i < 2) return;
+    fprintf(stderr, "Time: ");
+    if (step_time_i > 2)
+        fprintf(stderr, "%.3f ", calc_microsecond(step_time[0], step_time[step_time_i-1]));
+    rep(i, step_time_i - 1)
+        fprintf(stderr, "%.3f ", calc_microsecond(step_time[i], step_time[i+1]));
+    fprintf(stderr, "\n");
+}
+
+char buf[40000];
+int bufi = 0;
+template<typename T>
+void readi(T &n) {
+    bool negative = false;
+    int c;
+    n = 0;
+    c = buf[bufi++];
+    if (c == '-') negative = true, c = buf[bufi++];
+    for (; '0' <= c && c <= '9'; c = buf[bufi++])
+        n = 10 * n + c - '0';
+    if (negative) n = -n;
+}
+
 // End of template.
+
+constexpr int N = 80*80;
 
 int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int h, w;
-    int a[81][81], b[81][81], diff[81][81];
-    cin >> h >> w;
-    rep(hi, h) rep(wi, w) cin >> a[hi][wi];
-    rep(hi, h) rep(wi, w) cin >> b[hi][wi];
-    rep(hi, h) rep(wi, w) diff[hi][wi] = abs(a[hi][wi] - b[hi][wi]);
+    measure_time();
 
+    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
+    measure_time();
+
+    int h, w, a[81][81] = {};
+    readi(h); readi(w);
+    rep(hi, h) rep(wi, w) readi(a[hi][wi]);
+    rep(hi, h) rep(wi, w) {
+        int x;
+        readi(x);
+        a[hi][wi] -= x;
+        if (a[hi][wi] < 0) a[hi][wi] *= -1;
+    }
+
+    measure_time();
+
+    bitset<2*N> dp[81];
+    bitset<N> dp0[81];
+    dp0[0][N/2] = true;
+    rep(hi, h) {
+        for (int wi = hi; wi >= 0; --wi) {
+            dp[wi + 1] |= (dp[wi] << a[hi][wi]) | (dp[wi] >> a[hi][wi]);
+        }
+    }
+
+    rep(i, (sizeof dp) / (sizeof dp[0])) {
+        memcpy(((char*) &dp[i]) + N / 2 / 8, &dp0[i], N / 8);
+    }
+
+    measure_time();
+
+    const auto& ans = dp[w];
+    rep(i, N) {
+        if (ans.test(N + i) || ans.test(N - i)) {
+            print(i);
+            break;
+        }
+    }
+
+    measure_time();
+    print_time();
     return 0;
 }
+
 

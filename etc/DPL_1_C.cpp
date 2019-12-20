@@ -116,23 +116,29 @@ void readi(T &n) {
 
 // End of template.
 
+template<typename T>
+void chmax(T &a, const T& b) { if (a < b) a = b; }
+
 int main(){
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    measure_time();
+    int n, W;
+    cin >> n >> W;
+    int dp[10010] = {};
+    rep(i, n) {
+        int v, w;
+        cin >> v >> w;
+        for (int x = w; x <= W; x += 1)
+            chmax(dp[x], dp[x - w] + v);
+    }
 
-    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
+    int ans = 0;
+    rep(i, W + 1) chmax(ans, dp[i]);
+    print(ans);
 
-    measure_time();
-
-    int n, t, a[3000], b[3000];
-    readi(n);
-    readi(t);
-
-    measure_time();
-    print_time();
     return 0;
 }
 
