@@ -116,11 +116,8 @@ void readi(T &n) {
 
 // End of template.
 
-template<typename T> void chmax(T& x, const T& y) { if (x < y) x = y; }
-template<typename T> void chmin(T& x, const T& y) { if (x > y) x = y; }
-
-pll dp[1 << 15 + 10];
-int64 dp0[200 * 1000 + 10];
+template<typename T>
+void chmin(T& x, const T& y) { if (x > y) x = y; }
 
 int main(){
     cout << fixed << setprecision(15);
@@ -128,64 +125,37 @@ int main(){
     cin.tie(nullptr);
     // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    int64 n, W, maxv = 0, maxw = 0;
-    int64 v[200], w[200];
-    cin >> n >> W;
+    int n, k;
+    int a[2020];
+    a[0] = 0;
+    cin >> n >> k;
     rep(i, n) {
-        cin >> v[i] >> w[i];
-        chmax(maxv, v[i]);
-        chmax(maxw, w[i]);
+        cin >> a[i + 1];
+        a[i + 1] += a[i];
     }
 
-    if (n <= 30) {
-        int64 ans = 0;
-        auto dp_begin = begin(dp);
-        auto dp_end = begin(dp) + (1 << (n / 2));
-
-        rep(bits, 1 << (n / 2)) {
-            rep(i, n / 2) if (bits & (1 << i)) {
-                dp[bits].first += v[i];
-                dp[bits].second += w[i];
-            }
-        }
-        sort(dp_begin, dp_end, [](const auto a, const auto b) {
-            return a.second == b.second ? a.first > b.first : a.second < b.second;
-        });
-        dp_end = unique(dp_begin, dp_end, [](const auto& a, const auto& b) {
-            return a.second == b.second;
-        });
-        rep(i, dp_end - dp_begin - 1) chmax(dp[i + 1].first, dp[i].first);
-
-        rep(bits, 1 << (n - n / 2)) {
-            int64 vv = 0, ww = 0;
-            rep(i, n - n / 2) if (bits & (1 << i)) {
-                vv += v[i + n / 2];
-                ww += w[i + n / 2];
-            }
-            auto it = partition_point(dp_begin, dp_end, [&ww, &W](const auto& x) {return x.second + ww <= W;});
-            if (it > dp_begin)
-                chmax(ans, vv + (it - 1)->first);
-        }
-        print(ans);
-    } else if (maxw <= 1000) {
-        rep(i, n) {
-            for (int j = min(W, n * maxw); j >= w[i]; --j) {
-                chmax(dp0[j], dp0[j - w[i]] + v[i]);
-            }
-        }
-        print(dp0[min(W, n * maxw)]);
-    } else { // maxv <= 1000
-        fill(begin(dp0) + 1, begin(dp0) + n * maxv + 1, INF64);
-        rep(i, n) {
-            for (int j = n * maxv - v[i]; j >= 0; --j) {
-                chmin(dp0[j + v[i]], dp0[j] + w[i]);
-            }
-        }
-        int ans = 0;
-        rep(i, n * maxv + 1) if (dp0[i] <= W) chmax(ans, i);
-        print(ans);
+    if (a[n] == k) {
+        print(1);
+        cerr << "sum(a) == k";
+        return 0;
     }
 
+    int dp[2020]; // dp[i][j]: i日目までにj日間機嫌かいい時に必要な勝利数
+    fill(begin(dp), end(dp), INF);
+    dp[0] = 0;
+    a[0] = 1;
+    rep(i, n) {
+        rep(j, i) {
+            int x = a[i + 1] * dp[j] / a[i] + 1;
+            if (x <= a[i + 1]) chmin(dp[j + 1], dp[j] + x);
+        }
+        rep(k, 15) cerr << dp[k] << ' '; cerr << '\n';
+    }
+
+    for (int i = n; i >= 0; --i) if (dp[i] <= k) {
+        print(i);
+        return 0;
+    }
 
     return 0;
 }

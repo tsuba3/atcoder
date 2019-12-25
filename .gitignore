@@ -219,3 +219,11 @@ Cargo.lock
 ### Scala ###
 
 # End of https://www.gitignore.io/api/c,c++,rust,java,scala,python
+
+
+# Test cases
+
+*.in
+*.out
+
+
