@@ -92,7 +92,7 @@ template<typename T> bool chmax(T& a, const T& b) {
 
 // End of template.
 
-int main(){
+int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
