@@ -20,11 +20,6 @@
                   Please give me AC.
 */
 
-#pragma GCC optimize ("O3")
-#pragma GCC target ("avx")
-
-#include <boost/sort/spreadsort/integer_sort.hpp>
-
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -97,6 +92,8 @@ template<typename T> bool chmax(T& a, const T& b) {
 
 // End of template.
 
+constexpr int64 mod = 1e9 + 7;
+
 // Begin Mod
 template<typename T, T mod_, bool is_prime = true>
 class Mod {
@@ -140,110 +137,20 @@ public:
 };
 // End Mod
 
-// begin fast io
-
-char buf[10000000];
-int bufi = 0;
-
-template<typename T>
-void readi(T &n) {
-    bool negative = false;
-    if (buf[bufi] == '-') negative = true, bufi++, readui(n);
-    if (negative) n = -n;
-}
-
-template<typename T>
-void readui(T &n) {
-    n = 0;
-    int c = buf[bufi++];
-    for (; '0' <= c && c <= '9'; c = buf[bufi++])
-        n = 10 * n + c - '0';
-}
-
-template<typename T>
-void readf(T &x) {
-    bool negative = false;
-    if (buf[bufi] == '-') negative = true, bufi++, readuf(x);
-    if (negative) x = -x;
-}
-
-template<typename T>
-void readuf(T &x) {
-    x = 0;
-    T y = 0;
-    int z = 0;
-    int c = buf[bufi++];
-    for (; '0' <= c && c <= '9'; c = buf[bufi++])
-        x = 10 * x + c - '0';
-    if (buf[bufi - 1] == '.')
-        for (; '0' <= c && c <= '9'; c = buf[bufi++], ++z)
-            y = 10 * y + c - '0';
-    x += y / pow(10, z);
-}
-
-void reads(string &s) {
-    const int begin = bufi;
-    int c;
-    while (c = buf[bufi++], c != ' ' && c != '\n') {}
-    s = string(buf + begin, buf + bufi);
-}
-
-void readline(string &s) {
-    const int begin = bufi;
-    while (buf[bufi++] != '\n') {}
-    s = string(buf + begin, buf + bufi);
-}
-
-// end fast io
-
-chrono::high_resolution_clock::time_point step_time[10];
-int step_time_i = 0;
-void measure_time() {
-    step_time[step_time_i++] = chrono::high_resolution_clock::now();
-}
-double calc_microsecond(const chrono::high_resolution_clock::time_point &a, const chrono::high_resolution_clock::time_point &b) {
-    return chrono::duration_cast<chrono::microseconds>(b - a).count() / 1000.0;
-}
-void print_time() {
-    if (step_time_i < 2) return;
-    fprintf(stderr, "Time: ");
-    if (step_time_i > 2)
-        fprintf(stderr, "%.3f ", calc_microsecond(step_time[0], step_time[step_time_i-1]));
-    rep(i, step_time_i - 1)
-        fprintf(stderr, "%.3f ", calc_microsecond(step_time[i], step_time[i+1]));
-    fprintf(stderr, "\n");
-}
-
-constexpr uint64 mod = 1e9 + 7;
+using M = Mod<int64, mod>;
 
 int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    measure_time();
-    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
+    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    int n, c[200100];
-    readui(n);
-    rep(i, n) readui(c[i]);
-    c[n] = c[n+1] = c[n+2] = c[n+3] = 0;
-    measure_time();
-    boost::sort::spreadsort::integer_sort(begin(c), begin(c) + n);
-    measure_time();
+    int n, k, a[21];
+    cin >> n >> k;
+    rep(i, k) cin >> a[i];
+    sort(begin(a), begin(a) + k);
 
-    uint64 t1 = 0, t2 = 0, t3 = 0, t4 = 0;
-    for (int i = 0; i < n; i += 4) {
-        t1 += int64(c[i + 0]) * int64(n - (i + 0) + 1);
-        t2 += int64(c[i + 1]) * int64(n - (i + 1) + 1);
-        t3 += int64(c[i + 2]) * int64(n - (i + 2) + 1);
-        t4 += int64(c[i + 3]) * int64(n - (i + 3) + 1);
-    }
-    t1 %= mod, t2 %= mod, t3 %= mod, t4 %= mod;
-    Mod<uint64, mod> ans = Mod<uint64, mod>(4).pow(n - 1);
-    ans *= (t1 + t2 + t3 + t4) % mod;
-    print(ans.value);
-    measure_time();
-    print_time();
+
 
     return 0;
 }
