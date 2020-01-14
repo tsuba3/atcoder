@@ -39,5 +39,15 @@ public:
         return res;
     }
 };
+
+template<typename T, T mod>
+istream& operator>>(istream& stream, Mod<T, mod>& m) {
+    return stream >> m.value;
+}
+
+template<typename T, T mod>
+ostream& operator<<(ostream& stream, const Mod<T, mod>& m) {
+    return stream << m.value;
+}
 // End Mod
 
