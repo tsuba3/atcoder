@@ -4,13 +4,6 @@ char buf[10000000];
 int bufi = 0;
 
 template<typename T>
-void readi(T &n) {
-    bool negative = false;
-    if (buf[bufi] == '-') negative = true, bufi++, readui(n);
-    if (negative) n = -n;
-}
-
-template<typename T>
 void readui(T &n) {
     n = 0;
     int c = buf[bufi++];
@@ -19,10 +12,11 @@ void readui(T &n) {
 }
 
 template<typename T>
-void readf(T &x) {
+void readi(T &n) {
     bool negative = false;
-    if (buf[bufi] == '-') negative = true, bufi++, readuf(x);
-    if (negative) x = -x;
+    if (buf[bufi] == '-') negative = true, bufi++;
+    readui(n);
+    if (negative) n = -n;
 }
 
 template<typename T>
@@ -37,6 +31,14 @@ void readuf(T &x) {
         for (; '0' <= c && c <= '9'; c = buf[bufi++], ++z)
             y = 10 * y + c - '0';
     x += y / pow(10, z);
+}
+
+template<typename T>
+void readf(T &x) {
+    bool negative = false;
+    if (buf[bufi] == '-') negative = true, bufi++;
+    readuf(x);
+    if (negative) x = -x;
 }
 
 void reads(string &s) {
