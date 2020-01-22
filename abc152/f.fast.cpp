@@ -20,6 +20,9 @@
                   Please give me AC.
 */
 
+#pragma GCC optimize ("O3", "unroll-loops")
+#pragma GCC target ("arch=ivybridge,tune=ivybridge")
+
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -92,17 +95,74 @@ template<typename T> bool chmax(T& a, const T& b) {
 
 // End of template.
 
+// begin fast io
+
+char buf[10000000];
+int bufi = 0;
+
+template<typename T>
+void readui(T &n) {
+    n = 0;
+    int c = buf[bufi++];
+    for (; '0' <= c && c <= '9'; c = buf[bufi++])
+        n = 10 * n + c - '0';
+}
+
+template<typename T>
+void readi(T &n) {
+    bool negative = false;
+    if (buf[bufi] == '-') negative = true, bufi++;
+    readui(n);
+    if (negative) n = -n;
+}
+
+template<typename T>
+void readuf(T &x) {
+    x = 0;
+    T y = 0;
+    int z = 0;
+    int c = buf[bufi++];
+    for (; '0' <= c && c <= '9'; c = buf[bufi++])
+        x = 10 * x + c - '0';
+    if (buf[bufi - 1] == '.')
+        for (; '0' <= c && c <= '9'; c = buf[bufi++], ++z)
+            y = 10 * y + c - '0';
+    x += y / pow(10, z);
+}
+
+template<typename T>
+void readf(T &x) {
+    bool negative = false;
+    if (buf[bufi] == '-') negative = true, bufi++;
+    readuf(x);
+    if (negative) x = -x;
+}
+
+void reads(string &s) {
+    const int begin = bufi;
+    int c;
+    while (c = buf[bufi++], c != ' ' && c != '\n') {}
+    s = string(buf + begin, buf + bufi);
+}
+
+void readline(string &s) {
+    const int begin = bufi;
+    while (buf[bufi++] != '\n') {}
+    s = string(buf + begin, buf + bufi);
+}
+
+// end fast io
+
 #define mask(i) (1ULL << i)
 
-vector<int> edge[51];
-int edge_number[100][100];
-uint64 dfs(int w, int v, bool visited[], uint64 bit) {
-    visited[w] = true;
+vector<char> edge[50];
+char edge_number[50][50];
+uint64 dfs(const char w, const char v, uint64& visited, uint64 bit) {
     if (w == v) return bit;
-    for (const auto x : edge[w]) if (!visited[x]) {
-        visited[x] = true;
+    for (const auto x : edge[w]) if (!(visited & mask(x))) {
+        visited |= mask(x);
         uint64 res = dfs(x, v, visited, bit | mask(edge_number[w][x]));
-        if (res != 0) return res;
+        if (res) return res;
     }
     return 0;
 }
@@ -111,39 +171,33 @@ int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
+    cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    int n, m;
-
-    uint64 e[21] = {};
-    cin >> n;
+    char n, m;
+    uint64 e[20] = {};
+    readui(n);
     rep(i, n - 1) {
-        int a, b;
-        cin >> a >> b;
-        a--, b--;
+        char a, b;
+        readui(a), readui(b), a--, b--;
         edge[a].push_back(b);
         edge[b].push_back(a);
         edge_number[a][b] = edge_number[b][a] = i;
     }
 
-    cin >> m;
+    readui(m);
     rep(i, m) {
-        int u, v;
-        cin >> u >> v;
-        u--, v--;
-        bool visited[60] = {};
+        char u, v;
+        readui(u), readui(v), u--, v--;
+        uint64 visited = mask(u);
         e[i] = dfs(u, v, visited, 0);
-        debug(e[i]);
     }
 
-    int64 ans = pow(2LL, n - 1);
-    for (uint64 bit = 1; bit < (1 << m); ++bit) {
-        int en = __builtin_popcountll(bit);
+    int64 ans = 0;
+    for (int bit = 0; bit < (1 << m); ++bit) {
         uint64 x = 0;
         rep(i, m) if (bit & mask(i)) x |= e[i];
         int bn = __builtin_popcountll(x);
-        // ans += pow(-1, en) * pow(2LL, n - 1 - bn);
-        ans += ((en & 1) ? -1 : 1) * (1LL << (n - 1 - bn));
+        ans += (1 - (__builtin_parityll(bit) << 1)) * (1LL << (n - 1 - bn));
     }
 
     print(ans);
