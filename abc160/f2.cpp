@@ -91,7 +91,6 @@ template<typename T> bool chmax(T& a, const T& b) {
 }
 
 // End of template.
-
 // Begin Mod
 template<typename T, T mod_, bool is_prime = true>
 class Mod {
@@ -99,18 +98,18 @@ public:
     using Self = Mod<T, mod_, is_prime>;
     T value;
     static constexpr T mod = mod_;
-    constexpr Mod() : value(0) {}
-    constexpr Mod(T x) : value(x % mod) {}
-    explicit operator T&() { return value; }
-    Self operator +(Self const x) const { return (value + x.value) % mod; }
-    constexpr Self operator *(Self const x)  { return (value * x.value) % mod; }
-    Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
-    Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
-    Self operator +=(Self const x) { return value = (value + x.value) % mod; }
-    Self operator *=(Self const x) { return value = (value * x.value) % mod; }
-    Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
-    Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
-    Self inv() const {
+    constexpr Mod() : value() {}
+    constexpr Mod(T x) : value() { value = x % mod; }
+    explicit constexpr operator T&() { return value; }
+    constexpr Self operator +(Self const x) const { return (value + x.value) % mod; }
+    constexpr Self operator *(Self const x) const { return (value * x.value) % mod; }
+    constexpr Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
+    constexpr Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
+    constexpr Self operator +=(Self const x) { return value = (value + x.value) % mod; }
+    constexpr Self operator *=(Self const x) { return value = (value * x.value) % mod; }
+    constexpr Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
+    constexpr Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
+    constexpr Self inv() const {
         T a = value, b = mod, u = 1, v = 0;
         while (b) {
             T t = a / b;
@@ -121,18 +120,7 @@ public:
         if (u < 0) u += mod;
         return u;
     }
-    constexpr Self inv_ce() const {
-        T a = value, b = mod, u = 1, v = 0, t = 0;
-        while (b) {
-            T t = a / b;
-            a -= t * b; t = a; b = a; a = t;
-            u -= t * v; t = u; u = v; v = t;
-        }
-        u %= mod;
-        if (u < 0) u += mod;
-        return u;
-    }
-    Self pow(int e) const {
+    constexpr Self pow(int e) const {
         if (e < 0) return inv().pow(-e);
         if (is_prime) e %= mod - 1;
         Self base = value;
@@ -156,63 +144,57 @@ ostream& operator<<(ostream& stream, const Mod<T, mod>& m) {
     return stream << m.value;
 }
 // End Mod
+
 constexpr int64 mod = 1e9 + 7;
 using M = Mod<int64, mod>;
 
 constexpr struct Fact {
-    M fact[200200];
-    constexpr Fact() : fact() {
-        fact[0] = 1;
-        rep(i, 200199) fact[i + 1] = fact[i] * (i + 1);
+    M a[200200];
+    constexpr Fact() : a() {
+        a[0] = 1;
+        rep(i, 200200 - 1) a[i + 1] = a[i] * (i + 1);
     }
-    constexpr M operator()(int i) const { return fact[i]; }
+    M operator()(int x) const { return a[x]; }
 } fact;
-/*
-constexpr struct FactInv {
-    M inv[200200];
-    constexpr FactInv() : inv() {
-        rep(i, 200200) inv[i] = fact(i).inv_ce();
-    }
-    M operator()(int i) const { return inv[i]; }
-} inv;
-*/
-struct A { int sz; M x; };
-ostream& operator<<(ostream& stream, const A& a) {
-    return stream << '{' << a.sz << ", " << a.x << '}';
-}
 
-vector<pair<int, A>> v[200200];
+struct A {
+    int sz;
+    M m;
+};
+
+vector<int> v[200200];
+A dp[200200];
 int ans[200200];
 
-A dfs1(int i, int parent) {
-    int sz = 1;
-    M m = 1;
-    for (auto& j : v[i]) if (j.first != parent) {
-        j.second = dfs1(j.first, i);
-        sz += j.second.sz;
-        m *= j.second.x;
-        m /= fact(j.second.sz);
+A dfs1(int i, int p) {
+    A ret{0, 1}; // unit
+    for (int j : v[i]) if (j != p) {
+        A child = dfs1(j, i);
+        ret.sz += child.sz;
+        ret.m *= child.m / fact(child.sz);
     }
-    m *= fact(sz - 1);
-    return A{sz, m};
+    ret.m *= fact(ret.sz);
+    ret.sz += 1;
+    return dp[i] = ret;
 }
 
-void dfs2(int i, int parent, A a) {
-    A total{1, 1};
-    total.sz += a.sz;
-    total.x *= a.x;
-    total.x /= fact(a.sz);
-    for (const auto& j : v[i]) if (j.first != parent) {
-        total.sz += j.second.sz;
-        total.x *= j.second.x;
-        total.x /= fact(j.second.sz);
+void dfs2(int i, int p, A pa) {
+    A total{0, 1};
+    total.sz += pa.sz;
+    total.m *= pa.m / fact(pa.sz);
+    for (int j : v[i]) if (j != p) {
+        total.sz += dp[j].sz;
+        total.m *= dp[j].m / fact(dp[j].sz);
     }
-    total.x *= fact(total.sz - 1);
-    ans[i] = total.x.value;
-    debug3(i, a, ans[i]);
-    debug2(total.x, total.sz);
-    for (const auto& j : v[i]) if (j.first != parent) {
-        dfs2(j.first, i, A{total.sz - j.second.sz, total.x / j.second.x * fact(j.second.sz)});
+    ans[i] = (fact(total.sz) * total.m).value;
+    for (int j : v[i]) if (j != p) {
+        A a = total;
+        a.sz -= dp[j].sz;
+        a.m *= fact(dp[j].sz) / dp[j].m;
+
+        a.m *= fact(a.sz);
+        a.sz += 1;
+        dfs2(j, i, a);
     }
 }
 
@@ -228,12 +210,12 @@ int main() {
         int a, b;
         cin >> a >> b;
         a--, b--;
-        v[a].push_back(make_pair(b, A{0,0}));
-        v[b].push_back(make_pair(a, A{0,0}));
+        v[a].push_back(b);
+        v[b].push_back(a);
     }
 
-    dfs1(0, -1).x.value;
-    dfs2(0, -1, A{0, 1});
+    dfs1(0, -1);
+    dfs2(0, -1, {0, 1});
     rep(i, n) print(ans[i]);
 
     return 0;
