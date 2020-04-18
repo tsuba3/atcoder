@@ -1,0 +1,7 @@
+n = int(input())
+s = input()
+r = len(list(filter(lambda c: c == 'R', s)))
+g = len(list(filter(lambda c: c == 'G', s)))
+b = len(list(filter(lambda c: c == 'B', s)))
+ans = r * g * b - sum([sum([1 for j in range(i + 1, (n + i + 1) // 2) if s[i] != s[j] and s[j] != s[(k := 2 * j - i)] and s[k] != s[i]]) for i in range(n)])
+print(ans)
