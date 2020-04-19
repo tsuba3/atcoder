@@ -98,17 +98,18 @@ public:
     using Self = Mod<T, mod_, is_prime>;
     T value;
     static constexpr T mod = mod_;
-    Mod(T x) { value = x % mod; }
-    explicit operator T&() { return value; }
-    Self operator +(Self const x) const { return (value + x.value) % mod; }
-    Self operator *(Self const x) const { return (value * x.value) % mod; }
-    Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
-    Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
-    Self operator +=(Self const x) { return value = (value + x.value) % mod; }
-    Self operator *=(Self const x) { return value = (value * x.value) % mod; }
-    Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
-    Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
-    Self inv() const {
+    constexpr Mod() : value() {}
+    constexpr Mod(T x) : value() { value = x % mod; }
+    explicit constexpr operator T&() { return value; }
+    constexpr Self operator +(Self const x) const { return (value + x.value) % mod; }
+    constexpr Self operator *(Self const x) const { return (value * x.value) % mod; }
+    constexpr Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
+    constexpr Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
+    constexpr Self operator +=(Self const x) { return value = (value + x.value) % mod; }
+    constexpr Self operator *=(Self const x) { return value = (value * x.value) % mod; }
+    constexpr Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
+    constexpr Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
+    constexpr Self inv() const {
         T a = value, b = mod, u = 1, v = 0;
         while (b) {
             T t = a / b;
@@ -119,7 +120,7 @@ public:
         if (u < 0) u += mod;
         return u;
     }
-    Self pow(int e) const {
+    constexpr Self pow(int e) const {
         if (e < 0) return inv().pow(-e);
         if (is_prime) e %= mod - 1;
         Self base = value;
@@ -149,15 +150,9 @@ constexpr int64 mod = 1e9 + 7;
 using M = Mod<int64, mod>;
 
 M C(int n, int r) {
-    M res = 1;
-    M div = 1;
-    for (int64 i = 0; i < r; ++i) {
-        res *= n - i;
-    }
-    for (int64 i = 1; i <= r; ++i) {
-        div *= i;
-    }
-    return res / div;
+    M a = 1, b = 1;
+    while (r) a *= n--, b *= r--;
+    return a / b;
 }
 
 int main() {
@@ -169,12 +164,11 @@ int main() {
     int n, a, b;
     cin >> n >> a >> b;
 
-    M ans = M(2).pow(n);
-    ans -= 1;
+    M ans = M(2).pow(n) - 1;
     ans -= C(n, a);
     ans -= C(n, b);
 
-    print(ans.value);
+    print(ans);
 
     return 0;
 }

@@ -100,6 +100,7 @@ int main() {
 
     int n, r;
     cin >> n >> r;
+
     if (n >= 10)
         print(r);
     else

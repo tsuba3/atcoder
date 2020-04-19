@@ -1,0 +1,8 @@
+project(ABC156)
+set(CMAKE_CXX_FLAGS "-std=c++17")
+add_executable(ABC156A a.cpp)
+add_executable(ABC156B b.cpp)
+add_executable(ABC156C c.cpp)
+add_executable(ABC156D d.cpp)
+add_executable(ABC156E e.cpp)
+add_executable(ABC156F f.cpp)

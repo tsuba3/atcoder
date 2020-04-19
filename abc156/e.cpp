@@ -98,18 +98,18 @@ public:
     using Self = Mod<T, mod_, is_prime>;
     T value;
     static constexpr T mod = mod_;
-    Mod(T x) { value = x % mod; }
-    Mod() {}
-    explicit operator T&() { return value; }
-    Self operator +(Self const x) const { return (value + x.value) % mod; }
-    Self operator *(Self const x) const { return (value * x.value) % mod; }
-    Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
-    Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
-    Self operator +=(Self const x) { return value = (value + x.value) % mod; }
-    Self operator *=(Self const x) { return value = (value * x.value) % mod; }
-    Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
-    Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
-    Self inv() const {
+    constexpr Mod() : value() {}
+    constexpr Mod(T x) : value() { value = x % mod; }
+    explicit constexpr operator T&() { return value; }
+    constexpr Self operator +(Self const x) const { return (value + x.value) % mod; }
+    constexpr Self operator *(Self const x) const { return (value * x.value) % mod; }
+    constexpr Self operator -(Self const x) const { return (mod + value - x.value) % mod; }
+    constexpr Self operator /(Self const x) const { return (value * x.inv().value) % mod; }
+    constexpr Self operator +=(Self const x) { return value = (value + x.value) % mod; }
+    constexpr Self operator *=(Self const x) { return value = (value * x.value) % mod; }
+    constexpr Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
+    constexpr Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
+    constexpr Self inv() const {
         T a = value, b = mod, u = 1, v = 0;
         while (b) {
             T t = a / b;
@@ -120,7 +120,7 @@ public:
         if (u < 0) u += mod;
         return u;
     }
-    Self pow(int e) const {
+    constexpr Self pow(int e) const {
         if (e < 0) return inv().pow(-e);
         if (is_prime) e %= mod - 1;
         Self base = value;
@@ -145,17 +145,18 @@ ostream& operator<<(ostream& stream, const Mod<T, mod>& m) {
 }
 // End Mod
 
-
 constexpr int64 mod = 1e9 + 7;
 using M = Mod<int64, mod>;
-M fact[400200];
-M inv[400200];
 
-M C(int n, int r) {
-    if (r == 0) return M(1);
-    return fact[n] * inv[r] * inv[n - r];
-}
-
+constexpr struct Fact {
+    static constexpr size_t N = 200200;
+    M a[N];
+    constexpr Fact() : a() {
+        a[0] = 1;
+        rep(i, N - 1) a[i + 1] = a[i] * (i + 1);
+    }
+    constexpr M operator()(size_t i) const { return a[i]; }
+} fact;
 
 int main() {
     cout << fixed << setprecision(15);
@@ -163,25 +164,18 @@ int main() {
     cin.tie(nullptr);
     // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
-    int64 n, k;
+    int n, k;
     cin >> n >> k;
 
-    fact[0] = fact[1] = inv[0] = inv[1] = M(1);
-    for (int i = 1; i < 400199; ++i) {
-        fact[i + 1] = fact[i] * (i+1);
-        inv[i] = fact[i].inv();
+    M ans = 1;
+
+    for (int r = min(n - 1, k); r > 0; --r) {
+        M a = fact(n) * fact(n - 1);
+        M b = fact(r) * fact(n - r) * fact(n - r - 1) * fact(r);
+        ans += a / b;
     }
 
-    if (k >= n - 1) {
-        print(C(2*n - 1, n - 1).value);
-        return 0;
-    }
-
-    // k < n - 1; n <= 2e5
-    M ans = C(2*n - 1, n - 1);
-
-
-    print(ans.value);
+    print(ans);
 
     return 0;
 }

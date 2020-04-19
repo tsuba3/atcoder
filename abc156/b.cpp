@@ -100,16 +100,14 @@ int main() {
 
     int n, k;
     cin >> n >> k;
+
     int ans = 0;
-    if (n == 0) {
-        print(1);
-        return 0;
-    }
-    while (n > 0) {
-        n /= k;
+    while (n >= k) {
         ans += 1;
+        n /= k;
     }
-    print(ans);
+
+    print(1 + ans);
 
     return 0;
 }
