@@ -1,0 +1,10 @@
+project(ABC163)
+set(CMAKE_CXX_FLAGS "-O2 -std=c++17 -Wall")
+set(CMAKE_CXX_STANDARD 17)
+add_executable(ABC163A a.cpp)
+add_executable(ABC163B b.cpp)
+add_executable(ABC163C c.cpp)
+add_executable(ABC163D d.cpp)
+add_executable(ABC163E e.cpp)
+add_executable(ABC163F f.cpp)
+
