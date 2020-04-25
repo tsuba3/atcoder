@@ -56,7 +56,7 @@ public:
             l >>= 1; r >>= 1;
         }
     }
-    
+
     vector<MT> v;
     int n;
     int depth;
@@ -68,7 +68,7 @@ public:
  * 遅延評価セグメントツリー
  * M はモノイド、Op は区間演算を表すモノイド、
  * f(m, op, n) は n 区間合成したモノイド m に演算子 op を作用した結果
- * f(m1*m2, op, n1+n2) == f(m1, op, n1) * f(m2, op, n2) が必要（分配法則）
+ * f(m1*m2, op, n1+n2) == f(m1, op, n1) * f(m2, op, n2) が必要（準同型）
  * op_cummutative: 演算子が可換かどうか、可換なら update が定数倍高速化する
  */
 template<typename M, typename Op = M, typename M::type f(typename M::type const, typename Op::type const, int const) = st_default<M>, bool op_commutative = false>
@@ -120,7 +120,7 @@ public:
         recalc(l);
         recalc(r - 1);
     }
-    /// 点取得 O(1)
+    /// 点取得 O(log n)
     MT get(int i) {
         i += n;
         propagate(i);
@@ -140,10 +140,6 @@ public:
         }
         return M::f(L, R);
     }
-    /// 全区間取得 O(1)
-    MT get() const {
-        return f(v[1], lazy[1], 1 << depth);
-    }
     /// 点演算 O(log n)
     void update(int i, OpT const op) {
         i += n;
@@ -162,10 +158,6 @@ public:
         }
         recalc(l);
         recalc(r - 1);
-    }
-    /// 全区間演算 O(1)
-    void update(OpT const op) {
-        lazy[1] = Op::f(lazy[1], op);
     }
     /// 全て評価 O(n)
     void eval() {
