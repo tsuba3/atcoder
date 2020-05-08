@@ -3,6 +3,10 @@
 char buf[10000000], OUT[10000000];
 int bufi = 0, outi = 0;
 
+char readc() {
+    return buf[bufi++];
+}
+
 template<typename T>
 void readui(T &n) {
     n = 0;
@@ -52,6 +56,15 @@ void readline(string &s) {
     const int begin = bufi;
     while (buf[bufi++] != '\n') {}
     s = string(buf + begin, buf + bufi);
+}
+
+void writec(char c) {
+    OUT[outi++] = c;
+}
+
+void writes(string& s) {
+    memcpy(OUT + outi, s.c_str(), s.size());
+    outi += s.size();
 }
 
 const char digit_pairs[] = {
@@ -130,6 +143,15 @@ void writeui(T n) {
     }
 }
 
+template<typename T>
+void writei(T n) {
+    if (n < 0) {
+        writec('-');
+        writeui(-n);
+    } else {
+        writeui(n);
+    }
+}
 
 // end fast io
 
