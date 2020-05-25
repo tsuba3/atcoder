@@ -6,7 +6,7 @@ public:
     T value;
     static constexpr T mod = mod_;
     constexpr Mod() : value() {}
-    constexpr Mod(T x) : value() { value = x % mod; }
+    constexpr Mod(T x) : value() { value = (x + value) % mod; }
     explicit constexpr operator T&() { return value; }
     constexpr Self operator +(Self const x) const { return (value + x.value) % mod; }
     constexpr Self operator *(Self const x) const { return (value * x.value) % mod; }
