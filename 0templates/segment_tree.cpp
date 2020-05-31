@@ -17,6 +17,9 @@ public:
         this->n = 1 << depth;
         v.resize(2 * this->n, M::unit);
     }
+    void bulk_set(int i, MT const m) {
+        v[n + i] = m;
+    }
     void set(int i, MT const m) {
         i += n;
         v[i] = m;
