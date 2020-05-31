@@ -1,0 +1,13 @@
+project(AGC044)
+cmake_minimum_required(VERSION 3.15)
+set(CMAKE_CXX_FLAGS "-O2 -std=c++17 -Wall")
+set(CMAKE_CXX_STANDARD 17)
+find_package(BOOST)
+include_directories(${Boost_INCLUDE_DIRS})
+add_executable(AGC044A a.cpp)
+add_executable(AGC044B b.cpp)
+add_executable(AGC044C c.cpp)
+add_executable(AGC044D d.cpp)
+add_executable(AGC044E e.cpp)
+add_executable(AGC044F f.cpp)
+
