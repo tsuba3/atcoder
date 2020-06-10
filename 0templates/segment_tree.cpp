@@ -23,18 +23,18 @@ public:
     void set(int i, MT const m) {
         i += n;
         v[i] = m;
-        build(i, i + 1);
+        _build(i, i + 1);
     }
     void set(int l, int r, MT const m) {
         l += n; r += n;
         for (int i = l; i < r; ++i) v[i] = m;
-        build(l, r);
+        _build(l, r);
     }
     template<typename I>
     void set(int l, int r, I it) {
         l += n; r += n;
         for (int i = l; i < r; ++i) v[i] = *it++;
-        build(l, r);
+        _build(l, r);
     }
     MT get() const {
         return v[1];
@@ -50,8 +50,10 @@ public:
         }
         return M::f(L, R);
     }
-
     void build(int l, int r) {
+        _build(l + n, r + n);
+    }
+    void _build(int l, int r) {
         r--;
         l >>= 1; r >>= 1;
         while (l > 0) {
@@ -88,14 +90,14 @@ public:
     void set(MT const m) {
         fill(begin(v) + n, begin(v) + 2 * n, m);
         fill(begin(lazy), end(lazy), Op::unit);
-        build(n, 2*n);
+        _build(n, 2*n);
     }
     void set(int i, MT const m) {
         i += n;
         propagate(i);
         v[i] = m;
         lazy[i] = Op::unit;
-        build(i, i + 1);
+        _build(i, i + 1);
         recalc(i);
     }
     void set(int l, int r, MT const m) {
@@ -106,7 +108,7 @@ public:
         for (int ll = l, rr = r; ll < rr; ll >>= 1, rr >>= 1) {
             for (int i = ll; i < rr; ++i) lazy[i] = Op::unit;
         }
-        build(l, r);
+        _build(l, r);
         recalc(l);
         recalc(r - 1);
     }
@@ -119,7 +121,7 @@ public:
         for (int ll = l, rr = r; ll < rr; ll >>= 1, rr >>= 1) {
             for (int i = ll; i < rr; ++i) lazy[i] = Op::unit;
         }
-        build(l, r);
+        _build(l, r);
         recalc(l);
         recalc(r - 1);
     }
@@ -172,7 +174,7 @@ public:
             v[i] = f(v[i], lazy[i], 1);
         }
         fill(lazy.begin(), lazy.end(), Op::unit);
-        build(n, 2*n);
+        _build(n, 2*n);
     }
 // private:
 
@@ -200,6 +202,10 @@ public:
     }
 
     void build(int l, int r) {
+        _build(l + n, r + n);
+    }
+
+    void _build(int l, int r) {
         --r;
         while (l < r) {
             ++l; --r;
