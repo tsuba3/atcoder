@@ -96,7 +96,6 @@ int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    // cin.read(buf, sizeof buf); // 注意: ./a.out < in か pbp | ./a.out で入力すること
 
     return 0;
 }
