@@ -17,6 +17,7 @@ public:
     constexpr Self operator -=(Self const x) { return value = (mod + value - x.value) % mod; }
     constexpr Self operator /=(Self const x) { return value = (value * x.inv().value) % mod; }
     constexpr Self inv() const {
+        if (is_prime) return pow(mod - 2);
         T a = value, b = mod, u = 1, v = 0;
         while (b) {
             T t = a / b;
