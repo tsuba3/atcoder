@@ -1,0 +1,13 @@
+project(ABC171)
+cmake_minimum_required(VERSION 3.15)
+set(CMAKE_CXX_FLAGS "-O2 -std=c++17 -Wall")
+set(CMAKE_CXX_STANDARD 17)
+find_package(BOOST)
+include_directories(${Boost_INCLUDE_DIRS})
+add_executable(ABC171A a.cpp)
+add_executable(ABC171B b.cpp)
+add_executable(ABC171C c.cpp)
+add_executable(ABC171D d.cpp)
+add_executable(ABC171E e.cpp)
+add_executable(ABC171F f.cpp)
+
