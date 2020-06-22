@@ -66,25 +66,30 @@ struct FastIO {
         if (negative) x = -x;
     }
 
-    void reads(string &s) {
+    string_view reads() {
         const char *begin = buf;
         char c;
         while (c = readc(), c != ' ' && c != '\n') {}
-        s = string(begin, buf);
+        return string_view(begin, buf - begin - 1);
     }
 
-    void readline(string &s) {
+    string_view readline() {
         const char *begin = buf;
         while (readc() != '\n') {}
-        s = string(begin, buf);
+        return string_view(begin, buf - begin - 1);
     }
 
-    void writec(char c) {
+    void writec(const char c) {
         *out++ = c;
     }
 
-    void writes(string& s) {
+    void writes(const string& s) {
         memcpy(out, s.c_str(), s.size());
+        out += s.size();
+    }
+
+    void writes(const string_view& s) {
+        memcpy(out, s.data(), s.size());
         out += s.size();
     }
 
