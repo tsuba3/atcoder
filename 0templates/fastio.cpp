@@ -108,7 +108,7 @@ struct FastIO {
 
     template<typename T>
     void writeui(T n) {
-        if (n == 0) writec('0');
+        if (n == 0) { writec('0'); return; }
         int size;
         if (n >= 1e12) {
             if (n >= 1e16) {
