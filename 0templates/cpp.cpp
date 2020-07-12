@@ -60,10 +60,18 @@ using pll = pair<int64, int64>;
 #define print2(x, y) cout << (x) << ' ' << (y) << '\n'
 #define print3(x, y, z) cout << (x) << ' ' << (y) << ' ' << (z) << '\n'
 #define printn(v) rep(i, (v).size() - 1) cout << (v)[i] << ' '; cout << (v)[n - 1] << '\n';
+#ifdef ONLINE_JUDGE
+#define debug(x)
+#define debug2(x, y)
+#define debug3(x, y, z)
+#define dbg(v)
+#else
 #define debug(x) cerr << #x << ": " << (x) << '\n'
 #define debug2(x, y) cerr << #x << ": " << (x) << ", " << #y << ": " << (y) << '\n'
 #define debug3(x, y, z) cerr << #x << ": " << (x) << ", " << #y << ": " << (y) << ", " << #z << ": " << (z) << '\n'
 #define dbg(v) for (size_t _ = 0; _ < v.size(); ++_){cerr << #v << "[" << _ << "] : " << v[_] << '\n';}
+#endif
+
 // constant
 const int INF = (1<<30) - 1;
 const int64 INF64 = (1LL<<62) - 1;
@@ -96,6 +104,8 @@ int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    cout.tie(nullptr);
+    cerr.tie(nullptr);
 
     return 0;
 }
