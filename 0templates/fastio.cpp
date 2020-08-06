@@ -69,7 +69,7 @@ struct FastIO {
     string_view reads() {
         const char *begin = buf;
         char c;
-        while (c = readc(), c != ' ' && c != '\n') {}
+        while (c = readc(), c >= '!') {}
         return string_view(begin, buf - begin - 1);
     }
 
