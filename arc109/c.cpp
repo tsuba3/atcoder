@@ -107,22 +107,7 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
-    }
 
     return 0;
 }

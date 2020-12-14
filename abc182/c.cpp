@@ -107,22 +107,37 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    string n;
+    cin >> n;
+    int s = 0;
+    unordered_map<int, int> m;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    for (char c : n) {
+        s += c - '0';
+        m[(c - '0') % 3] += 1;
     }
+    s %= 3;
+
+    int ans = -1;
+
+    if (s == 0) {
+        ans = 0;
+    } else if (s == 1) {
+        if (m[1]) {
+            ans = 1;
+        } else if (m[2] >= 2) {
+            ans = 2;
+        }
+    } else if (s == 2) {
+        if (m[2]) {
+            ans = 1;
+        } else if (m[1] == 2) {
+            ans = 2;
+        }
+    }
+
+    if (n.size() <= ans) ans = -1;
+    print(ans);
 
     return 0;
 }

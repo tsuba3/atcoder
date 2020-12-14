@@ -107,30 +107,37 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int n, m, a[200200];
+    cin >> n >> m;
+    rep(i, m) cin >> a[i];
+    a[m] = 0;
+    a[m + 1] = n + 1;
+    sort(begin(a), begin(a) + m + 2);
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    int k = INF;
+    rep(i, m + 1) {
+        int d = a[i + 1] - a[i] - 1;
+        if (d > 0) chmin(k, d);
     }
+    debug(k);
+
+    int ans = 0;
+    rep(i, m + 1) {
+        int d = a[i + 1] - a[i] - 1;
+        if (d > 0) ans += (d + k - 1) / k;
+    }
+
+    print(ans);
+
 
     return 0;
 }
 
 /*
-  ___   ___ _ __  _ __
- / __| / __| '_ \| '_ \
-| (__ | (__| |_) | |_) |
- \___(_)___| .__/| .__/
-           |_|   |_|
+     _
+  __| |  ___ _ __  _ __
+ / _` | / __| '_ \| '_ \
+| (_| || (__| |_) | |_) |
+ \__,_(_)___| .__/| .__/
+            |_|   |_|
 */

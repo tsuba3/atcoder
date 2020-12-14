@@ -107,30 +107,38 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int n, m, t;
+    cin >> n >> m >> t;
+    vector<pii> v(m);
+    rep(i, m) cin >> v[i].first >> v[i].second;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    bool ok = true;
+    int b = n;
+    int now = 0;
+
+    rep(i, m) {
+        b -= v[i].first - now;
+        if (b <= 0) ok = false;
+        now = v[i].first;
+
+        b += v[i].second - now;
+        now = v[i].second;
+        if (b > n) b = n;
     }
+
+    b -= t - now;
+    if (b <= 0) ok = false;
+
+    print(ok ? "Yes" : "No");
 
     return 0;
 }
 
 /*
-  ___   ___ _ __  _ __
- / __| / __| '_ \| '_ \
-| (__ | (__| |_) | |_) |
- \___(_)___| .__/| .__/
+ _
+| |__   ___ _ __  _ __
+| '_ \ / __| '_ \| '_ \
+| |_) | (__| |_) | |_) |
+|_.__(_)___| .__/| .__/
            |_|   |_|
 */

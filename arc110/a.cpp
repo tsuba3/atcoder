@@ -107,30 +107,32 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int n;
+    cin >> n;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    int64 ans = 1;
+    vector<int64> P{2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+
+    for (int i = P.size() - 1; i >= 0; --i) {
+        int64 p = P[i];
+        if (n >= p) {
+            int64 pp = p;
+            while (pp <= n) pp *= p;
+            pp /= p;
+            ans *= pp;
+            debug(pp);
+        }
     }
+
+    print(ans + 1);
 
     return 0;
 }
 
 /*
-  ___   ___ _ __  _ __
- / __| / __| '_ \| '_ \
-| (__ | (__| |_) | |_) |
- \___(_)___| .__/| .__/
-           |_|   |_|
+  __ _   ___ _ __  _ __
+ / _` | / __| '_ \| '_ \
+| (_| || (__| |_) | |_) |
+ \__,_(_)___| .__/| .__/
+            |_|   |_|
 */

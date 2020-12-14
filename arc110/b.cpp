@@ -100,6 +100,10 @@ template<typename T> bool chmax(T& a, const T& b) {
 
 // End of template.
 
+char S(int64 i) {
+    if (i % 3 == 2) return '0'; else return '1';
+}
+
 int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
@@ -107,30 +111,45 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int n;
+    string t;
+    cin >> n >> t;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    if (n == 1) {
+        if (t == "1") {
+            print(20000000000);
+            return 0;
+        } else {
+            print(10000000000);
+            return 0;
+        }
     }
+
+    int64 ans = 0;
+
+    rep(i, 3) {
+        bool ok = true;
+        rep(j, n) {
+            ok &= t[j] == S(i + j);
+        }
+
+        if (!ok) continue;
+
+        int64 x = 30000000000LL - int64(i + n);
+        ans = x / 3 + 1;
+        break;
+    }
+
+    print(ans);
 
     return 0;
 }
 
 /*
-  ___   ___ _ __  _ __
- / __| / __| '_ \| '_ \
-| (__ | (__| |_) | |_) |
- \___(_)___| .__/| .__/
+ _
+| |__   ___ _ __  _ __
+| '_ \ / __| '_ \| '_ \
+| |_) | (__| |_) | |_) |
+|_.__(_)___| .__/| .__/
            |_|   |_|
 */

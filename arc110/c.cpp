@@ -107,21 +107,43 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int n;
+    int P[200200];
+    int inv[200200];
+    vector<int> ans;
+    ans.reserve(n);
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
+    cin >> n;
+    rep(i, n) {
+        cin >> P[i];
+        P[i]--;
+        inv[P[i]] = i;
+    }
+
+    bool ok = true;
+
+    for (int x = 0; x < n - 1;) {
+        int r = inv[x];
+        if (x > r) {
+            ok = false;
+            break;
+        }
+
+        for (int i = x; i < r; ++i) {
+            ok &= P[i] == i + 1;
+        }
+        if (!ok) break;
+
+        for (int i = r - 1; i >= x; --i) ans.push_back(i);
+
+        debug2(x, r);
+        x = r;
+    }
+
+    if (ok) {
+        for (int x : ans) print(x);
     } else {
-        print(3);
+        print(-1);
     }
 
     return 0;

@@ -100,6 +100,9 @@ template<typename T> bool chmax(T& a, const T& b) {
 
 // End of template.
 
+int A(int i) { return i; }
+int B(int i) { return 101 + i; }
+
 int main() {
     cout << fixed << setprecision(15);
     ios::sync_with_stdio(false);
@@ -107,30 +110,48 @@ int main() {
     cout.tie(nullptr);
     cerr.tie(nullptr);
 
-    int64 r1, c1, r2, c2;
-    cin >> r1 >> c1 >> r2 >> c2;
+    int a, b, x, y;
+    cin >> a >> b >> x >> y;
 
-    if (r1 == r2 && c1 == c2) {
-        print(0);
-    } else if (r1 + c1 == r2 + c2 || r1 - c1 == r2 - c2 || abs(r1 - r2) + abs(c1 - c2) <= 3) {
-        print(1);
-    } else if ((abs(r1 - r2) + abs(c1 - c2)) % 2 == 0) {
-        print(2);
-    } else if (abs(c1 + r2 - r1 - c2) <= 3 || abs(c1 + r1 - r2 - c2) <= 3) {
-        print(2);
-    } else if (abs(c1 + c2 - r1 - r2) <= 6) {
-        print(2);
-    } else {
-        print(3);
+    vector<pii> v[220];
+    for (int i = 1; i <= 99; ++i) {
+        v[A(i)].emplace_back(A(i + 1), y);
+        v[A(i + 1)].emplace_back(A(i), y);
+        v[B(i)].emplace_back(B(i + 1), y);
+        v[B(i + 1)].emplace_back(B(i), y);
+
+        v[B(i)].emplace_back(A(i + 1), x);
+        v[A(i + 1)].emplace_back(B(i), x);
     }
+    for (int i = 1; i <= 100; ++i) {
+        v[A(i)].emplace_back(B(i), x);
+        v[B(i)].emplace_back(A(i), x);
+    }
+
+    priority_queue<pii, vector<pii>, greater<>> q;
+    int dp[220];
+    rep(i, 220) dp[i] = INF;
+    dp[A(a)] = 0;
+    q.emplace(0, A(a));
+
+    while (!q.empty()) {
+        auto [x, s] = q.top();
+        q.pop();
+        if (dp[s] < x) continue;
+        for (auto [t, cost] : v[s]) {
+            if (chmin(dp[t], dp[s] + cost)) q.emplace(dp[t], t);
+        }
+    }
+
+    print(dp[B(b)]);
 
     return 0;
 }
 
 /*
-  ___   ___ _ __  _ __
- / __| / __| '_ \| '_ \
-| (__ | (__| |_) | |_) |
- \___(_)___| .__/| .__/
-           |_|   |_|
+  __ _   ___ _ __  _ __
+ / _` | / __| '_ \| '_ \
+| (_| || (__| |_) | |_) |
+ \__,_(_)___| .__/| .__/
+            |_|   |_|
 */
