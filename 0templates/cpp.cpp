@@ -90,11 +90,11 @@ template<typename T> T lcm(const T a, const T b) {
     return a / gcd(a, b) * b;
 }
 
-template<typename T> bool chmin(T& a, const T& b) {
+template<typename S, typename T> bool chmin(S& a, const T& b) {
     if (a > b) return a = b, true; else return false;
 }
 
-template<typename T> bool chmax(T& a, const T& b) {
+template<typename S, typename T> bool chmax(S& a, const T& b) {
     if (a < b) return a = b, true; else return false;
 }
 

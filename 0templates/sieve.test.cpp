@@ -37,24 +37,27 @@ void check(T a, T b) {
     }
 }
 
-constexpr Sieve<100> s100;
-constexpr Sieve<2000> s2000;
-constexpr Sieve<10000> s10000;
-constexpr Sieve<100000> s100000;
-
 int main() {
-
-    check(25, s100.sz);
-    check(303, s2000.sz);
-    check(1229, s10000.sz);
-    check(9592, s100000.sz);
-    check(71, s100.primes[19]);
-    check(71, s100000.primes[19]);
-    check(7919, s100000.primes[999]);
-    check(true, s100000.test(283));
-    check(false, s100000.test(4945));
-    check(false, s100000.test(123456789LL));
-    check(true, s100000.test(1000000009));
+    auto st = chrono::high_resolution_clock::now();
+    const Sieve sieve(int(1e8));
+    auto et = chrono::high_resolution_clock::now();
+    cout << "Erathostenes " << chrono::duration_cast<chrono::milliseconds>(et - st).count() << "ms" << endl;
+/*
+    auto st2 = chrono::high_resolution_clock::now();
+    const AtkinSieve atkin(int(1e8));
+    auto et2 = chrono::high_resolution_clock::now();
+    cout << "Atkin        " << chrono::duration_cast<chrono::milliseconds>(et2 - st2).count() << "ms" << endl;
+    */
+    for (int p : {2, 3, 5, 7, 3209, 2857}) check(sieve.is_prime(p), true);
+    for (int np : {16, 13 * 17, 283 * 371, 3 * 283}) check(sieve.is_prime(np), false);
+    /*
+    for (int i = 1; i <= 1e8; i += 1) {
+        if (sieve.is_prime(i) != atkin.is_prime(i)) {
+            cout << "❌ " << i << endl;
+            return 1;
+        }
+    }
+    */
 
     return flag;
 }
